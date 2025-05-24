@@ -32,8 +32,8 @@ Cada movimiento consume tiempo en función del peso transportado. El objetivo es
 ## Ejemplo de uso
 
 1. Cargar escenarios: Opción seleccionada (1)
-                                ```=====        GraphQuest        =====\n
-                                1. Cargar Laberinto desde CSV\n
+                                ```bash =====        GraphQuest        =====
+                                1. Cargar Laberinto desde CSV
                                 2. Iniciar Partida
                                 3. Salir
                                 Seleccione una opcion:```                               
