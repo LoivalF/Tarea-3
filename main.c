@@ -9,7 +9,7 @@
  */
 void leer_escenarios() {
   // Intenta abrir el archivo CSV que contiene datos de películas
-  FILE *archivo = fopen("data/graphquest.csv", "r");
+  FILE *archivo = fopen("graphquest.csv", "r");
   if (archivo == NULL) {
     perror(
         "Error al abrir el archivo"); // Informa si el archivo no puede abrirse
