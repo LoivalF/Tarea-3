@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 // Structs a usar
 typedef struct {
@@ -25,11 +26,9 @@ typedef struct {
     Direcciones conexiones; // Claves: "arriba", "abajo", "izquierda", "derecha".
     int es_final; // 1 si es final, 0 si no
 } Escenario;
-
-Escenario escenarios[17];
 typedef struct {
     List* inventario;
-    int tiempo;
+    float tiempo;
     int puntaje;
     int peso_total;
     Escenario* actual;
@@ -44,7 +43,7 @@ int is_equal_int(void *a, void *b) {
     return *((int*)a) == *((int*)b);
 }
 
-
+Escenario escenarios[17];
 Escenario* escenariosALL[17];
 
 /* Carga canciones desde un archivo CSV */
@@ -107,7 +106,6 @@ void leer_escenarios() {
     
     // Agregar el nuevo escenario al arreglo de escenarios
     escenariosALL[id] = nuevoEscenario; // El primero se guarda con ID 1
-
   }
   fclose(archivo); // Cierra el archivo después de leer todas las líneas
 }
@@ -123,9 +121,11 @@ void recoger_item(Jugador *jugador) {
     printf("Item: %s, Valor: %d, Peso: %d\n", item->nombre, item->valor, item->peso);
   }
 
-  printf("Seleccione el item a recoger: ");
+  printf("Seleccione el item a recoger, ingrese el nombre como se indica: ");
   char nombre[50];
-  scanf("%s", nombre); getchar();
+  fgets(nombre, sizeof(nombre), stdin);
+  nombre[strcspn(nombre, "\n")] = 0; 
+  
 
   for (Item *item = list_first(items); item != NULL; item = list_next(items)) {
     if (strcmp(item->nombre, nombre) == 0) {
@@ -133,7 +133,9 @@ void recoger_item(Jugador *jugador) {
         jugador->peso_total += item->peso;
         jugador->puntaje += item->valor;
         list_pushBack(jugador->inventario, item);
-        printf("Item %s recogido.\n", item->nombre);
+        list_popCurrent(items);
+
+        printf("Item recogido con exito.\n");
       } 
       else {
         printf("No puedes cargar mas peso.\n");
@@ -145,50 +147,54 @@ void recoger_item(Jugador *jugador) {
 }
 
 void descartar_item(Jugador *jugador) {
-  printf("Items en el inventario\n");
-  if (list_size(jugador->inventario == 0)) {
+  if (list_size(jugador->inventario) == 0) {
     printf("No hay items en el inventario.\n");
     return;
   }
+
+  printf("Items en el inventario\n");
   for (Item *item = list_first(jugador->inventario); item != NULL; 
         item = list_next(jugador->inventario)) {
     printf("Item: %s, Valor: %d, Peso: %d\n", item->nombre, item->valor, item->peso);
   }
-  printf("Seleccione el item a descartar: ");
-  char nombre[50]; scanf("%s", nombre); getchar();
-  for (Item *item = list_first(jugador->inventario); item != NULL; 
-        item = list_next(jugador->inventario)) {
+
+  printf("Seleccione el item a descartar, ingrese el nombre como se indica: ");
+  char nombre[50]; 
+  fgets(nombre, sizeof(nombre), stdin);
+  nombre[strcspn(nombre, "\n")] = 0; 
+
+  for (Item *item = list_first(jugador->inventario); item != NULL; item = list_next(jugador->inventario)) {
     if (strcmp(item->nombre, nombre) == 0) {
       jugador->peso_total -= item->peso;
       jugador->puntaje -= item->valor;
-
-      list_popCurrent(jugador->inventario, item);
-      free(item->nombre);
+      list_popCurrent(jugador->inventario);
       free(item);
 
-      printf("Item %s descartado correctamente.\n", item->nombre);
+      printf("Item descartado con exito.\n");
       return;
     }
   }
   printf("Item no encontrado en el inventario.\n");
 }
 
-int condicionTiempo(Jugador *jugador) {
-  if (jugador->tiempo <= 0) {
-    printf("¡Se acabó el tiempo!\n");
-    return 0;
-  }
-  return 1;
+void reiniciarJuego(Jugador* jugador) {
+    jugador->actual = escenariosALL[1];  
+    jugador->tiempo = 10;
+    jugador->puntaje = 0;
+    jugador->peso_total = 0;
+    
+    if (jugador->inventario == NULL)
+        jugador->inventario = list_create();
+    else
+        list_clean(jugador->inventario);
+    
+    leer_escenarios();  
 }
 
 int main() {
   Jugador jugador;
-  jugador.inventario = list_create();
-  jugador.tiempo = 10;
-  jugador.puntaje = 0;
-  jugador.peso_total = 0;
-
   jugador.actual = NULL;  
+  jugador.inventario = NULL;
 
   int opcion;
 
@@ -211,12 +217,23 @@ int main() {
             // Iniciar partida
             case 2:
                 system("cls||clear");
+
                 if (!escenariosALL[1]) {
                     printf("Primero debe cargar el laberinto.\n");
                     break;
                 }
 
-                jugador.actual = escenariosALL[1]; // Comienza en el escenario con ID 1
+                if (jugador.inventario == NULL) {
+                  jugador.inventario = list_create();
+                }
+                else {
+                  list_clean(jugador.inventario);
+                }
+
+                jugador.actual = escenariosALL[1];
+                jugador.tiempo = 10;
+                jugador.puntaje = 0;
+                jugador.peso_total = 0;
 
                 if (!jugador.actual) {
                     printf("No se encontro la entrada del laberinto.\n");
@@ -227,13 +244,18 @@ int main() {
                 while (jugar && jugador.tiempo > 0 && jugador.actual != NULL) {
                     printf("\n--- ESCENARIO: %s ---\n", jugador.actual->nombre);
                     printf("%s\n", jugador.actual->descripcion);
-                    printf("Tiempo restante: %d\n", jugador.tiempo);
+                    printf("Tiempo restante: %.1f\n", jugador.tiempo);
                     printf("Puntaje acumulado: %d\n", jugador.puntaje);
                     printf("Peso: %d kg\n", jugador.peso_total);
                     printf("Items disponibles:\n");
 
-                    for (Item* item = list_first(jugador.actual->items); item != NULL; item = list_next(jugador.actual->items))
+                    if (list_size(jugador.actual->items) == 0) {
+                        printf("No hay items en este escenario.\n");
+                    }
+                    else {
+                        for (Item* item = list_first(jugador.actual->items); item != NULL; item = list_next(jugador.actual->items))
                         printf(" - %s (%d pts, %d kg)\n", item->nombre, item->valor, item->peso);
+                    }
 
                     printf("Direcciones disponibles:\n");
                     if (jugador.actual->conexiones.arriba != -1) printf(" - Arriba\n");
@@ -241,7 +263,7 @@ int main() {
                     if (jugador.actual->conexiones.izquierda != -1) printf(" - Izquierda\n");
                     if (jugador.actual->conexiones.derecha != -1) printf(" - Derecha\n");
 
-                    printf("\n1. Recoger Item\n2. Descartar Item\n3. Avanzar\n4. Reiniciar\n5. Salir\nOpción: ");
+                    printf("\n1. Recoger Item\n2. Descartar Item\n3. Avanzar\n4. Reiniciar\n5. Salir\nOpcion: ");
                     int eleccion;
                     scanf("%d", &eleccion);
                     getchar();
@@ -250,7 +272,7 @@ int main() {
                         case 1:
                             system("cls||clear");
                             jugador.tiempo--;
-                            if (condicionTiempo(&jugador) == 0) {
+                            if (jugador.tiempo <= 0) {
                                 jugar = 0;
                                 break;
                             }
@@ -259,18 +281,18 @@ int main() {
                         case 2:
                             system("cls||clear");
                             jugador.tiempo--;
-                            if (condicionTiempo(&jugador) == 0) {
+                            if (jugador.tiempo <= 0) {
                                 jugar = 0;
                                 break;
                             }
+                            descartar_item(&jugador);
                             break;
                         case 3: {
                             system("cls||clear");
                             char direccion[10];
-                            printf("Dirección a moverse: ");
+                            printf("Direccion a moverse, en minusculas: ");
                             scanf("%s", direccion);
                             int siguiente_id = -1;
-
                             if (strcmp(direccion, "arriba") == 0)
                                 siguiente_id = jugador.actual->conexiones.arriba;
                             else if (strcmp(direccion, "abajo") == 0)
@@ -280,47 +302,45 @@ int main() {
                             else if (strcmp(direccion, "derecha") == 0)
                                 siguiente_id = jugador.actual->conexiones.derecha;
                             else
-                                printf("Dirección inválida.\n");
-
+                                printf("Direccion invalida.\n");
                             if (siguiente_id != -1) {
-                                //jugador.actual = 
-                                int tiempo_gasto = (jugador.peso_total + 1 + 9) / 10;
+                                jugador.actual = escenariosALL[siguiente_id];
+                                printf("Te has movido a: %s\n", jugador.actual->nombre); 
+                                float tiempo_gasto = ceil((jugador.peso_total + 1) / 10.0);
                                 jugador.tiempo -= tiempo_gasto;
-                            } else {
-                                printf("No puedes ir por esa dirección.\n");
+                            } 
+                            else {
+                                printf("No puedes ir por esa direccion.\n");
                             }
                             break;
                         }
                         case 4:
                             system("cls||clear");
-                            jugador.actual = escenariosALL[1];
-                            jugador.tiempo = 10;
-                            jugador.peso_total = 0;
-                            jugador.puntaje = 0;
-                            list_clean(jugador.inventario);
+                            reiniciarJuego(&jugador);
+                            printf("Juego reiniciado correctamente.\n");
                             break;
                         case 5:
                             system("cls||clear");
                             jugar = 0;
                             break;
                     }
-
                     if (jugador.tiempo <= 0) {
-                        printf("¡Se acabó el tiempo!\n");
+                        system("cls||clear");
+                        printf("\nSe acabo el tiempo! Buen intento!\n\n");
                         jugar = 0;
                     } else if (jugador.actual && jugador.actual->es_final) {
-                        printf("¡Has llegado al final! Puntaje final: %d\n", jugador.puntaje);
+                        system("cls||clear");
+                        printf("\nHas llegado al final! Puntaje total: %d\n\n", jugador.puntaje);
                         jugar = 0;
                     }
                 }
                 break;
-
             case 3:
                 printf("Saliendo...\n");
                 break;
             default:
                 system("cls||clear");
-                printf("Opción inválida. Intente nuevamente.\n");
+                printf("Opcion invalida. Intente nuevamente.\n");
                 break;
         }
     } while (opcion != 3);
