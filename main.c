@@ -48,12 +48,12 @@ int is_equal_int(void *a, void *b) {
 Escenario* escenariosALL[17];
 
 /* Carga canciones desde un archivo CSV */
-void *leer_escenarios() {
+void leer_escenarios() {
   // Intenta abrir el archivo CSV que contiene datos de películas
   FILE *archivo = fopen("graphquest.csv", "r");
   if (archivo == NULL) {
     perror("Error al abrir el archivo"); // Informa si el archivo no puede abrirse
-    return NULL;
+    return;
   }
 
   char **campos;
@@ -108,7 +108,6 @@ void *leer_escenarios() {
     // Agregar el nuevo escenario al arreglo de escenarios
     escenariosALL[id] = nuevoEscenario; // El primero se guarda con ID 1
 
-    list_clean(campos);
   }
   fclose(archivo); // Cierra el archivo después de leer todas las líneas
 }
@@ -151,7 +150,7 @@ int main() {
   jugador.puntaje = 0;
   jugador.peso_total = 0;
 
-  jugador.actual = escenariosALL[1]; // Inicializar el escenario actual
+  jugador.actual = NULL;  
 
   int opcion;
 
@@ -178,6 +177,9 @@ int main() {
                     printf("Primero debe cargar el laberinto.\n");
                     break;
                 }
+
+                jugador.actual = escenariosALL[1]; // Comienza en el escenario con ID 1
+
                 if (!jugador.actual) {
                     printf("No se encontro la entrada del laberinto.\n");
                     break;
@@ -246,7 +248,7 @@ int main() {
                         }
                         case 4:
                             system("cls||clear");
-                            //jugador.actual = 
+                            jugador.actual = escenariosALL[1];
                             jugador.tiempo = 10;
                             jugador.peso_total = 0;
                             jugador.puntaje = 0;
@@ -270,6 +272,10 @@ int main() {
 
             case 3:
                 printf("Saliendo...\n");
+                break;
+            default:
+                system("cls||clear");
+                printf("Opción inválida. Intente nuevamente.\n");
                 break;
         }
     } while (opcion != 3);
