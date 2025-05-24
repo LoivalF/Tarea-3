@@ -30,3 +30,10 @@ Cada movimiento consume tiempo en función del peso transportado. El objetivo es
       * A la hora de recoger o descartar un item, usar la funcion toupper() o tolower() para mejor manejo, esto en caso de que el usuario ingrese "cOPA DORADA" en lugar de "Copa dorada" o casos similares.
 
 ## Ejemplo de uso
+
+1. Cargar escenarios: Opción seleccionada (1)
+                                =====        GraphQuest        =====
+                                1. Cargar Laberinto desde CSV
+                                2. Iniciar Partida
+                                3. Salir
+                                Seleccione una opcion:                                  
