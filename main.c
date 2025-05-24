@@ -12,19 +12,22 @@ typedef struct {
     int valor; // Valor del item
 } Item;
 typedef struct {
+  int arriba;
+  int abajo;
+  int izquierda;
+  int derecha;
+} Direcciones;
+typedef struct {
     int id; // ID del escenario
     char nombre[50]; // Nombre del escenario
     char descripcion[200]; // Descripción del escenario
-    List* items; // Lista de items (Item)
-    Map* conexiones; // Claves: "arriba", "abajo", "izquierda", "derecha".
+    List *items; // Lista de items (Item)
+    Direcciones conexiones; // Claves: "arriba", "abajo", "izquierda", "derecha".
     int es_final; // 1 si es final, 0 si no
 } Escenario;
 
-
-/**
- * Carga canciones desde un archivo CSV
- */
-void leer_escenarios() {
+/* Carga canciones desde un archivo CSV */
+void *leer_escenarios(Map *mapa_escenarios) {
   // Intenta abrir el archivo CSV que contiene datos de películas
   FILE *archivo = fopen("graphquest.csv", "r");
   if (archivo == NULL) {
@@ -38,53 +41,74 @@ void leer_escenarios() {
   // strings, donde cada elemento representa un campo de la línea CSV procesada.
   campos = leer_linea_csv(archivo, ','); // Lee los encabezados del CSV
 
-
   // Lee cada línea del archivo CSV hasta el final
   while ((campos = leer_linea_csv(archivo, ',')) != NULL) {
-    printf("ID: %d\n", atoi(campos[0]));
-    printf("Nombre: %s\n", campos[1]);
-    printf("Descripción: %s\n", campos[2]);
+    Escenario *escenario = malloc(sizeof(Escenario));
+    if (escenario == NULL) exit(EXIT_FAILURE);
 
-    List* items = split_string(campos[3], ";");
+    escenario->id = atoi(campos[0]);
+    escenario->es_final = atoi(campos[8]);
 
-    printf("Items: \n");
+    strncpy(escenario->nombre, campos[1], sizeof(escenario->nombre));
+    strncpy(escenario->descripcion, campos[2], sizeof(escenario->descripcion));
+
+    escenario->items = list_create();
+    if (escenario->items == NULL) exit(EXIT_FAILURE);
+
+    // Cargar los items
+    List *items = split_string(campos[3], ";");
+
     for(char *item = list_first(items); item != NULL; 
           item = list_next(items)){
 
-        List* values = split_string(item, ",");
-        char* item_name = list_first(values);
-        int item_value = atoi(list_next(values));
-        int item_weight = atoi(list_next(values));
-        printf("  - %s (%d pts, %d kg)\n", item_name, item_value, item_weight);
+        List *values = split_string(item, ",");
+        char *nombre = list_first(values);
+        int valor = atoi(list_next(values));
+        int peso = atoi(list_next(values));
+
+        Item *item = malloc(sizeof(Item));
+        if (item == NULL) exit(EXIT_FAILURE);
+
+        strncpy(item->nombre, nombre, sizeof(item->nombre));
+        item->valor = valor;
+        item->peso = peso;
+        list_pushBack(escenario->items, item);
+
         list_clean(values);
         free(values);
     }
 
-    int arriba = atoi(campos[4]);
-    int abajo = atoi(campos[5]);
-    int izquierda = atoi(campos[6]);
-    int derecha = atoi(campos[7]);
+    escenario->conexiones.arriba = atoi(campos[4]);
+    escenario->conexiones.abajo = atoi(campos[5]);
+    escenario->conexiones.izquierda = atoi(campos[6]);
+    escenario->conexiones.derecha = atoi(campos[7]);
 
-    if (arriba != -1) printf("Arriba: %d\n", arriba);
-    if (abajo != -1) printf("Abajo: %d\n", abajo);
-    if (izquierda != -1) printf("Izquierda: %d\n", izquierda);
-    if (derecha != -1) printf("Derecha: %d\n", derecha);
-
+    int* clave_id = malloc(sizeof(int));
+    *clave_id = escenario->id;
+    map_insert(mapa_escenarios, clave_id, escenario);
     
-    int is_final = atoi(campos[8]);
-    if (is_final) printf("Es final\n");
-
     list_clean(items);
     free(items);
     
   }
   fclose(archivo); // Cierra el archivo después de leer todas las líneas
+}
 
+/* Funcion para poder crear un mapa vacio */
+int is_equal_str(void *key1, void *key2) { 
+    return strcmp((char *)key1, (char *)key2) == 0; 
+}
+/* Funcion para poder crear un mapa vacio */
+int is_equal_int(void *key1, void *key2) {
+    return *(int *)key1 == *(int *)key2; 
 }
 
 
+
 int main() {
-  leer_escenarios();
+  Map *mapa_escenarios = map_create(is_equal_int);
+  if (mapa_escenarios == NULL) exit(EXIT_FAILURE);
+  leer_escenarios(mapa_escenarios);
 
   return 0;
 }
