@@ -25,7 +25,7 @@ Cada movimiento consume tiempo en función del peso transportado. El objetivo es
   - No se encontraron problemas a la hora de jugar
 
   - A mejorar
-      * Podría en algunos casos ser útil que al descartar el item, en lugar de simplemente borrarlo, lo devuelva al escenario acutal
+      * Podría en algunos casos ser útil que al descartar el item, en lugar de simplemente borrarlo, lo devuelva al escenario actual
       * Implementar una función para mover al jugador entre los distintos escenarios, para tener un orden óptimo en el main
       * A la hora de recoger o descartar un item, usar la funcion toupper() o tolower() para mejor manejo, esto en caso de que el usuario ingrese "cOPA DORADA" en lugar de "Copa dorada" o casos similares.
 
