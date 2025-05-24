@@ -143,6 +143,44 @@ void recoger_item(Jugador *jugador) {
   }
   printf("Item no encontrado.\n");
 }
+
+void descartar_item(Jugador *jugador) {
+  printf("Items en el inventario\n");
+  if (list_size(jugador->inventario == 0)) {
+    printf("No hay items en el inventario.\n");
+    return;
+  }
+  for (Item *item = list_first(jugador->inventario); item != NULL; 
+        item = list_next(jugador->inventario)) {
+    printf("Item: %s, Valor: %d, Peso: %d\n", item->nombre, item->valor, item->peso);
+  }
+  printf("Seleccione el item a descartar: ");
+  char nombre[50]; scanf("%s", nombre); getchar();
+  for (Item *item = list_first(jugador->inventario); item != NULL; 
+        item = list_next(jugador->inventario)) {
+    if (strcmp(item->nombre, nombre) == 0) {
+      jugador->peso_total -= item->peso;
+      jugador->puntaje -= item->valor;
+
+      list_popCurrent(jugador->inventario, item);
+      free(item->nombre);
+      free(item);
+
+      printf("Item %s descartado correctamente.\n", item->nombre);
+      return;
+    }
+  }
+  printf("Item no encontrado en el inventario.\n");
+}
+
+int condicionTiempo(Jugador *jugador) {
+  if (jugador->tiempo <= 0) {
+    printf("¡Se acabó el tiempo!\n");
+    return 0;
+  }
+  return 1;
+}
+
 int main() {
   Jugador jugador;
   jugador.inventario = list_create();
@@ -212,12 +250,19 @@ int main() {
                         case 1:
                             system("cls||clear");
                             jugador.tiempo--;
-                            printf("Recoger aún no implementado.\n");
+                            if (condicionTiempo(&jugador) == 0) {
+                                jugar = 0;
+                                break;
+                            }
+                            recoger_item(&jugador);
                             break;
                         case 2:
                             system("cls||clear");
                             jugador.tiempo--;
-                            printf("Descartar aún no implementado.\n");
+                            if (condicionTiempo(&jugador) == 0) {
+                                jugar = 0;
+                                break;
+                            }
                             break;
                         case 3: {
                             system("cls||clear");
