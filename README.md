@@ -1,4 +1,4 @@
-# Tarea 3: GraphQues
+# Tarea 3: GraphQuest
 
 ## 📜 Descripción
 
@@ -12,5 +12,5 @@ Cada movimiento consume tiempo en función del peso transportado. El objetivo es
       - Tener WinRar instalado, si no lo tienes, este es el link de la página para instalarlo: https://winrar.es/descargas
       - Sistema operativo: Windows. Debido a falta de pruebas, no hemos podido determinar si funciona en el sistema macOS
         
-   # Para abrir el programa
-  Tendrás que descargar el archivo .rar desde este link: https://www.mediafire.com/file/wmgw4fymlh3gnlu/programaTarea3.rar/file. Luego tendrás que extraer los archivos del .rar haciendo click derecho en el y seleccionar la opción: Extraer en "programaTarea3\". A continuación te dejará una carpeta con ambos archivos en su interior, unicamente hará falta ejecutar el archivo "tarea2.exe".
+   * Para abrir el programa
+      -Tendrás que descargar el archivo .rar desde este link: https://www.mediafire.com/file/wmgw4fymlh3gnlu/programaTarea3.rar/file. Luego tendrás que extraer los archivos del .rar haciendo click derecho en el y seleccionar la opción: Extraer en "programaTarea3\". A continuación te dejará una carpeta con ambos archivos en su interior, unicamente hará falta ejecutar el archivo "tarea2.exe".
