@@ -1,8 +1,25 @@
 #include "tdas/extra.h"
 #include "tdas/list.h"
+#include "tdas/map.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// Structs a usar
+typedef struct {
+    char nombre[50]; // Nombre del item
+    int peso; // Peso del item
+    int valor; // Valor del item
+} Item;
+typedef struct {
+    int id; // ID del escenario
+    char nombre[50]; // Nombre del escenario
+    char descripcion[200]; // Descripción del escenario
+    List* items; // Lista de items (Item)
+    Map* conexiones; // Claves: "arriba", "abajo", "izquierda", "derecha".
+    int es_final; // 1 si es final, 0 si no
+} Escenario;
+
 
 /**
  * Carga canciones desde un archivo CSV
