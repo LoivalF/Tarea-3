@@ -34,15 +34,6 @@ typedef struct {
     Escenario* actual;
 } Jugador;
 
-/* Funcion para poder crear un mapa vacio */
-int is_equal_str(void *a, void *b) { 
-    return strcmp((char*)a, (char*)b) == 0; 
-}
-/* Funcion para poder crear un mapa vacio */
-int is_equal_int(void *a, void *b) {
-    return *((int*)a) == *((int*)b);
-}
-
 Escenario escenarios[17];
 Escenario* escenariosALL[17];
 
@@ -191,6 +182,38 @@ void reiniciarJuego(Jugador* jugador) {
     leer_escenarios();  
 }
 
+void liberarTodo(Jugador* jugador) {
+  // Liberar inventario del jugador
+  if (jugador->inventario != NULL) {
+    for (Item* item = list_first(jugador->inventario); item != NULL; item = list_next(jugador->inventario)) {
+      free(item);
+    }
+    list_clean(jugador->inventario);
+    free(jugador->inventario);
+    jugador->inventario = NULL;
+  }
+
+    // Liberar cada escenario
+  for (int i = 1; i <= 16; i++) {
+    Escenario* esc = escenariosALL[i];
+    if (esc == NULL) continue;
+
+    // Liberar items del escenario
+    if (esc->items) {
+      for (Item* item = list_first(esc->items); item != NULL; item = list_next(esc->items)) {
+        free(item);
+      }
+      list_clean(esc->items);
+      free(esc->items);
+    }
+
+    free(esc->nombre);
+    free(esc->descripcion);
+    free(esc);
+    escenariosALL[i] = NULL;
+    }
+}
+
 int main() {
   Jugador jugador;
   jugador.actual = NULL;  
@@ -321,6 +344,7 @@ int main() {
                             break;
                         case 5:
                             system("cls||clear");
+                            printf("Saliendo al menu principal...\n");
                             jugar = 0;
                             break;
                     }
@@ -336,7 +360,10 @@ int main() {
                 }
                 break;
             case 3:
-                printf("Saliendo...\n");
+                system("cls||clear");
+                liberarTodo(&jugador);
+                printf("Gracias por jugar.\n");
+
                 break;
             default:
                 system("cls||clear");
