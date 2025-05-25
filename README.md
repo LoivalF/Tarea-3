@@ -60,3 +60,82 @@ Direcciones disponibles:
 5. Salir
 Opcion:
 ```
+3. Movernos por los escenarios: Opción seleccionada (3, abajo), (3, derecha)
+```
+Direccion a moverse, en minusculas: abajo
+Te has movido a: Cocina
+
+--- ESCENARIO: Cocina ---
+Restos de una batalla culinaria. Cuchillos por aqui, migajas por alla. Alguien cocinoÔÇª o fue cocinado.
+Tiempo restante: 9.0
+Puntaje acumulado: 0
+Peso: 0 kg
+Items disponibles:
+ - Cuchillo (3 pts, 1 kg)
+ - Pan (2 pts, 1 kg)
+Direcciones disponibles:
+ - Arriba
+ - Abajo
+ - Derecha
+```
+```
+Direccion a moverse, en minusculas: derecha
+Te has movido a: Comedor
+
+--- ESCENARIO: Comedor ---
+Una mesa elegante cubierta de polvo. Parece que nadie ha cenado aqui desde la ultima plaga. Al menos dejaron una copa.
+Tiempo restante: 8.0
+Puntaje acumulado: 0
+Peso: 0 kg
+Items disponibles:
+ - Copa dorada (8 pts, 3 kg)
+Direcciones disponibles:
+ - Arriba
+ - Abajo
+ - Izquierda
+ - Derecha
+```
+> Luego nos moveremos en este orden: derecha, abajo, izquierda, abajo, derecha
+
+4. Recogemos un item: Opción seleccionada (1, "Mapa")
+```
+--- ESCENARIO: Camara secreta ---
+Una sala oculta con simbolos raros y un mapa brillante. Nada que ver con una oficina de gobierno, esto si que es secreto.
+Tiempo restante: 3.0
+Puntaje acumulado: 0
+Peso: 0 kg
+Items disponibles:
+ - Mapa (10 pts, 1 kg)
+Direcciones disponibles:
+ - Izquierda
+ - Derecha
+```
+```
+Item en el escenario actual: Camara secreta
+Item: Mapa, Valor: 10, Peso: 1
+Seleccione el item a recoger, ingrese el nombre como se indica:
+```
+```
+Item recogido con exito.
+
+--- ESCENARIO: Camara secreta ---
+Una sala oculta con simbolos raros y un mapa brillante. Nada que ver con una oficina de gobierno, esto si que es secreto.
+Tiempo restante: 2.0
+Puntaje acumulado: 10
+Peso: 1 kg
+Items disponibles:
+No hay items en este escenario.
+Direcciones disponibles:
+ - Izquierda
+ - Derecha
+```
+5. Finalmente nos movemos una última vez a la derecha: Opción seleccionada (3, derecha)
+```
+Has llegado al final! Puntaje total: 10
+
+=====        GraphQuest        =====
+1. Cargar Laberinto desde CSV
+2. Iniciar Partida
+3. Salir
+Seleccione una opcion:
+```
