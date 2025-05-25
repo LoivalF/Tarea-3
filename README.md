@@ -40,3 +40,23 @@ Cada movimiento consume tiempo en función del peso transportado. El objetivo es
 Seleccione una opcion:
 ```
 > Cargando laberinto...
+
+2. Iniciar partida: Opción seleccionada (2)
+```
+--- ESCENARIO: Entrada principal ---
+Una puerta rechinante abre paso a esta mansion olvidada por los dioses y los conserjes. El aire huele a humedad y a misterios sin resolver.
+Tiempo restante: 10.0
+Puntaje acumulado: 0
+Peso: 0 kg
+Items disponibles:
+No hay items en este escenario.
+Direcciones disponibles:
+ - Abajo
+
+1. Recoger Item
+2. Descartar Item
+3. Avanzar
+4. Reiniciar
+5. Salir
+Opcion:
+```
