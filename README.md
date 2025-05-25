@@ -39,3 +39,4 @@ Cada movimiento consume tiempo en función del peso transportado. El objetivo es
 3. Salir
 Seleccione una opcion:
 ```
+> Cargando laberinto...
