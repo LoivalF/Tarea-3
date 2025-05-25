@@ -37,7 +37,13 @@ typedef struct {
 Escenario escenarios[17];
 Escenario* escenariosALL[17];
 
-/* Carga canciones desde un archivo CSV */
+/*
+Carga canciones desde un archivo CSV 
+Abre el archivo y avisa si no se pudo abrir, lee las lineas una a una, reserva memoria 
+de un struct Escenario para cada linea y guarda los datos dentro, luego la lista de los
+items los separa y los va incluyendo uno a uno en la lista dedicada a items, al final
+guarda el escenario con el ID anteriormente entregado
+*/
 void leer_escenarios() {
   // Intenta abrir el archivo CSV que contiene datos de películas
   FILE *archivo = fopen("graphquest.csv", "r");
@@ -101,6 +107,12 @@ void leer_escenarios() {
   fclose(archivo); // Cierra el archivo después de leer todas las líneas
 }
 
+/*
+Recorre la lista de los items del escenario actual y los muestra por pantalla,
+si no hay items lo avisa. Se escanea el item a recoger, que debe coincidir con
+lo que sale en pantalla y hacemos los cambios respectivos a las estadisticas 
+del jugador en caso de poder recogerse, si no puede por el peso, tambien lo dice
+*/
 void recoger_item(Jugador *jugador) {
   printf("Item en el escenario actual: %s\n", jugador->actual->nombre);
   List *items = jugador->actual->items;
@@ -137,6 +149,11 @@ void recoger_item(Jugador *jugador) {
   printf("Item no encontrado.\n");
 }
 
+/*
+Hace los mismo que la funcion de arriba, pero en lugar de recorrer el escenario, 
+recorre el inventario del jugador, y se le hace el cambio inverso a las estadisticas.
+En casos especiales tambien se avisara por pantalla
+*/
 void descartar_item(Jugador *jugador) {
   if (list_size(jugador->inventario) == 0) {
     printf("No hay items en el inventario.\n");
@@ -168,6 +185,11 @@ void descartar_item(Jugador *jugador) {
   printf("Item no encontrado en el inventario.\n");
 }
 
+
+/*
+Reinicia las estadisticas del jugador a las iniciales
+y lee nuevamente los escenarios 
+*/
 void reiniciarJuego(Jugador* jugador) {
     jugador->actual = escenariosALL[1];  
     jugador->tiempo = 10;
@@ -181,6 +203,7 @@ void reiniciarJuego(Jugador* jugador) {
     
     leer_escenarios();  
 }
+
 
 void liberarTodo(Jugador* jugador) {
   // Liberar inventario del jugador
@@ -214,6 +237,20 @@ void liberarTodo(Jugador* jugador) {
     }
 }
 
+
+/*
+Use dos switches, uno para el menu principal y otro para el menu 
+dentro del juego, dentro de la logica de juego, imprime los datos
+del jugador todo el rato. Luego para el moverse por los escenarios,
+muestra las direcciones disponibles al ser distinto de -1, luego
+compara la entrada del usuario con la direccion en minuscula,
+ademas se guarda la siguiente ID por la misma direccion del escenario,
+por lo que se sabe donde hay que moverse. Al final evalua las condiciones
+para seguir jugando.
+
+En cada opcion del juego se le resta 1 de tiempo.
+Al usar el salir del menu principal se libera toda la memoria usada.
+*/
 int main() {
   Jugador jugador;
   jugador.actual = NULL;  
